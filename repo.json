@@ -1,0 +1,21 @@
+[
+    {
+        "Name": "sortlines",
+        "Description": "Sort lines plugin for Micro Editor",
+        "Website": "https://github.com/milnak/micro-sortlines",
+        "Tags": [
+            "yapf",
+            "python",
+            "formatter"
+        ],
+        "Versions": [
+            {
+                "Version": "1.0.0",
+                "Url": "https://github.com/milnak/micro-yapf/archive/1.0.0.zip",
+                "Require": {
+                    "micro": ">=2.0.13"
+                }
+            }
+        ]
+    }
+]
