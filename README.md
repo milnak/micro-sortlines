@@ -22,6 +22,34 @@ Press `Ctrl-E`, type `sortlines`, and press Enter.
 See the [help file](help/sort-lines.md) or run `help sort-lines` in Micro
 for selection details and a key binding example.
 
+## Future
+
+Case-sensitive sorting functionality:
+
+- sortNormal - Sort lines (ascending, case sensitive)
+- sortUnique - Sort lines (unique ascending, case sensitive)
+- sortReverse - Sort lines (descending, case sensitive)
+
+Case-insensitive sorting functionality:
+
+- sortCaseInsensitive - Sort lines (ascending, case insensitive)
+- sortCaseInsensitiveUnique - Sort lines (unique ascending, case insensitive)
+
+Line length sorting functionality:
+
+- sortLineLength - Sort lines (line length ascending)
+- sortLineLengthReverse - Sort lines (line length descending)
+
+Misc functionality:
+
+- shuffleLines - Shuffle lines randomly
+
+Duplicate functionality:
+
+- removeDuplicateLines - Remove duplicate lines
+- keepOnlyDuplicateLines - Keep only duplicated lines
+- keepOnlyUniqueLines - Keep only unique lines
+
 ## References
 
 [Creating Plugins for Micro](https://github.com/micro-editor/micro/blob/master/runtime/help/plugins.md)
