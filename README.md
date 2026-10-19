@@ -2,24 +2,25 @@
 
 ## Installation
 
-1. clone
+```shell
+cd ~/.config/micro/plug
+git clone https://github.com/milnak/micro-sortlines.git sortlines
+```
 
-   ```shell
-   git clone git@github.com:milnak/micro-sortlines.git
-   ```
-
-2. install (Windows)
-
-   ```PowerShell
-   cd 'micro-sortlines'
-   .\install-local.ps1
-   ```
-
-3. restart Micro
+Then restart micro.
 
 ## Usage
 
-See [help file](help\sortlines.md).
+Press `Ctrl-E`, type `sortlines`, and press Enter.
+
+- With a selection, sorts the complete lines touched by the selection.
+- Without a selection, sorts the whole buffer.
+- Sorts ascending, ignoring case, and removes case-insensitive duplicates.
+  The first occurrence's spelling is retained.
+- Preserves the final newline and text outside the sorted range.
+
+See the [help file](help/sort-lines.md) or run `help sort-lines` in Micro
+for selection details and a key binding example.
 
 ## References
 
@@ -27,8 +28,8 @@ See [help file](help\sortlines.md).
 
 [Micro API Documentation](https://pkg.go.dev/github.com/micro-editor/micro/v2/internal/action)
 
-* [BufPane](https://pkg.go.dev/github.com/micro-editor/micro/v2/internal/action#BufPane)
-* [Cursor](https://pkg.go.dev/github.com/micro-editor/micro/v2/internal/buffer#Cursor)
+- [BufPane](https://pkg.go.dev/github.com/micro-editor/micro/v2/internal/action#BufPane)
+- [Cursor](https://pkg.go.dev/github.com/micro-editor/micro/v2/internal/buffer#Cursor)
 
 [Micro Official Plugin Channel](https://github.com/micro-editor/plugin-channel)
 
