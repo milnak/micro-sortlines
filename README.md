@@ -11,7 +11,7 @@ Then restart micro.
 
 ## Usage
 
-Press `Ctrl-E`, type `sortlines`, and press Enter.
+Press `Ctrl-E`, type `sortlines` (or other function, see below), and press Enter.
 
 - With a selection, sorts the complete lines touched by the selection.
 - Without a selection, sorts the whole buffer.
@@ -22,27 +22,27 @@ Press `Ctrl-E`, type `sortlines`, and press Enter.
 See the [help file](help/sort-lines.md) or run `help sort-lines` in Micro
 for selection details and a key binding example.
 
-## Future
-
-Case-sensitive sorting functionality:
+### Functions
 
 - sortNormal - Sort lines (ascending, case sensitive)
 - sortUnique - Sort lines (unique ascending, case sensitive)
-- sortReverse - Sort lines (descending, case sensitive)
-
-Case-insensitive sorting functionality:
-
 - sortCaseInsensitive - Sort lines (ascending, case insensitive)
 - sortCaseInsensitiveUnique - Sort lines (unique ascending, case insensitive)
+- sortReverse - Sort lines (descending, case sensitive)
+- sortReverseUnique - Sort lines (unique descending, case sensitive)
+- sortReverseCaseInsensitive - Sort lines (descending, case insensitive)
+- sortReverseCaseInsensitiveUnique - Sort lines (unique descending, case insensitive)
+
+## Future
 
 Line length sorting functionality:
 
-- sortLineLength - Sort lines (line length ascending)
-- sortLineLengthReverse - Sort lines (line length descending)
+- sortLineLength - Sort lines (by line length ascending)
+- sortLineLengthReverse - Sort lines (by line length descending)
 
 Misc functionality:
 
-- shuffleLines - Shuffle lines randomly
+- shuffleLines - Shuffle lines
 
 Duplicate functionality:
 
