@@ -8,86 +8,57 @@ local micro = import("micro")
 local micro_buffer = import("micro/buffer")
 local config = import("micro/config")
 local strings = import("strings")
+local buffer = import("micro/buffer")
 
 function init()
     config.AddRuntimeFile("sortlines", config.RTHelp, "help/sort-lines.md")
 
-    -- SortCommand args: bufPane, args, descending, caseInsensitive, unique
-
     -- sortNormal - Sort lines (ascending, case sensitive)
     config.MakeCommand("sortnormal",
-        function(bp, args) SortCommand(bp, args, false, false, false) end,
+        function(bp, args) SortCommand(bp, args, {}) end,
         config.NoComplete)
 
     -- sortUnique - Sort lines (unique ascending, case sensitive)
     config.MakeCommand("sortunique",
-        function(bp, args) SortCommand(bp, args, false, false, true) end,
+        function(bp, args) SortCommand(bp, args, { unique = true }) end,
         config.NoComplete)
 
     -- sortCaseInsensitive - Sort lines (ascending, case insensitive)
     config.MakeCommand("sortcaseinsensitive",
-        function(bp, args) SortCommand(bp, args, false, true, false) end,
+        function(bp, args) SortCommand(bp, args, { caseInsensitive = true }) end,
         config.NoComplete)
 
     -- sortCaseInsensitiveUnique - Sort lines (unique ascending, case insensitive)
     config.MakeCommand("sortcaseinsensitiveunique",
-        function(bp, args) SortCommand(bp, args, false, true, true) end,
+        function(bp, args) SortCommand(bp, args, { caseInsensitive = true, unique = true }) end,
         config.NoComplete)
 
     -- sortReverse - Sort lines (descending, case sensitive)
     config.MakeCommand("sortreverse",
-        function(bp, args) SortCommand(bp, args, true, false, false) end,
+        function(bp, args) SortCommand(bp, args, { descending = true }) end,
         config.NoComplete)
 
     -- sortReverseUnique - Sort lines (unique descending, case sensitive)
     config.MakeCommand("sortreverseunique",
-        function(bp, args) SortCommand(bp, args, true, false, true) end,
+        function(bp, args) SortCommand(bp, args, { descending = true, unique = true }) end,
         config.NoComplete)
 
     -- sortReverseCaseInsensitive - Sort lines (descending, case insensitive)
     config.MakeCommand("sortreversecaseinsensitive",
-        function(bp, args) SortCommand(bp, args, true, true, false) end,
+        function(bp, args) SortCommand(bp, args, { descending = true, caseInsensitive = true }) end,
         config.NoComplete)
 
     -- sortReverseCaseInsensitiveUnique - Sort lines (unique descending, case insensitive)
     config.MakeCommand("sortreversecaseinsensitiveunique",
-        function(bp, args) SortCommand(bp, args, true, true, true) end,
+        function(bp, args) SortCommand(bp, args, { descending = true, caseInsensitive = true, unique = true }) end,
         config.NoComplete)
 end
 
-local function getLineRange(bufPane)
-    local buf, cursor = bufPane.Buf, bufPane.Cursor
-    local firstLine, lastLine = 0, buf:LinesNum() - 1
-
-    if cursor:HasSelection() then
-        local startPos, endPos = cursor.CurSelection[1], cursor.CurSelection[2]
-
-        micro.Log("[sortlines] Selection: "
-            .. tostring(startPos.Y) .. ":" .. tostring(startPos.X)
-            .. " - "
-            .. tostring(endPos.Y) .. ":" .. tostring(endPos.X))
-
-        firstLine, lastLine = startPos.Y, endPos.Y
-
-        -- A selection ending at column zero excludes that line.
-        if endPos.X == 0 and lastLine > firstLine then
-            lastLine = lastLine - 1
-        end
-    elseif lastLine > 0 and buf:Line(lastLine) == "" then
-        -- The final empty buffer line represents a terminating newline.
-        lastLine = lastLine - 1
-    end
-
-    micro.Log("[sortlines] Line range: " .. tostring(firstLine) .. " - " .. tostring(lastLine))
-    return firstLine, lastLine
-end
-
-function SortLines(lines, descending, caseInsensitive, unique)
+function SortLines(lines, opts)
     micro.Log("[sortlines] SortLines invoked. "
-        .. "descending=" .. tostring(descending)
-        .. " caseInsensitive="
-        .. tostring(caseInsensitive)
-        .. " unique=" .. tostring(unique))
+        .. "descending=" .. tostring(opts.descending)
+        .. " caseInsensitive=" .. tostring(opts.caseInsensitive)
+        .. " unique=" .. tostring(opts.unique))
 
     micro.Log("[sortlines] Original lines:")
     for lineNo, line in ipairs(lines) do
@@ -99,11 +70,7 @@ function SortLines(lines, descending, caseInsensitive, unique)
     local keys = {}
     local seen = {}
     for _, line in ipairs(lines) do
-        if unique then
-            if caseInsensitive then
-                line = string.lower(line)
-            end
-
+        if opts.unique then
             if not seen[line] then
                 table.insert(keys, line)
                 seen[line] = true
@@ -113,23 +80,23 @@ function SortLines(lines, descending, caseInsensitive, unique)
         end
     end
 
-    if caseInsensitive then
+    if opts.caseInsensitive then
         -- case insensitive
-        if descending then
+        if opts.descending then
             -- descending
-            table.sort(keys, function(a, b) return strings.ToLower(a) > strings.ToLower(b) end)
+            table.sort(keys, function(a, b) return string.lower(a) > string.lower(b) end)
         else
             -- ascending
-            table.sort(keys, function(a, b) return strings.ToLower(a) < strings.ToLower(b) end)
+            table.sort(keys, function(a, b) return string.lower(a) < string.lower(b) end)
         end
     else
         -- case sensitive
-        if descending then
+        if opts.descending then
             -- descending
             table.sort(keys, function(a, b) return a > b end)
         else
             -- ascending
-            table.sort(keys)
+            table.sort(keys, function(a, b) return a < b end)
         end
     end
 
@@ -141,39 +108,74 @@ function SortLines(lines, descending, caseInsensitive, unique)
     return keys
 end
 
-function SortCommand(bufPane, args, descending, caseInsensitive, unique)
+function GetLines(from, to)
+    local buf = micro.CurPane().Buf
+    local lines = { buf:Line(from.Y):sub(from.X + 1) }
+
+    if from.Y == to.Y then
+        return lines
+    end
+
+    for lineNo = from.Y + 1, to.Y - 1 do
+        table.insert(lines, buf:Line(lineNo))
+    end
+
+    table.insert(lines, buf:Line(to.Y):sub(1, to.X))
+
+    return lines
+end
+
+function SortCommand(pane, args, opts)
     if args ~= nil and #args > 0 then
         micro.InfoBar():Error("Usage: sortlines (no arguments)")
         return
     end
 
-    local buf, cursor = bufPane.Buf, bufPane.Cursor
+    local buf = pane.Buf
     if buf.Type.Readonly then
         micro.InfoBar():Error("sortlines: buffer is read-only")
         return
     end
 
-    local firstLine, lastLine = getLineRange(bufPane)
+    local cursor = pane.Cursor
+
+    local from, to
+
+    if cursor:HasSelection() then
+        -- Use lines from the selection
+        from, to = cursor.CurSelection[1], cursor.CurSelection[2]
+
+        micro.Log("[sortlines] Selection: " ..
+            tostring(from.Y) .. ":" .. tostring(from.X) .. " - " .. tostring(to.Y) .. ":" .. tostring(to.X))
+
+        -- Adjust the selection to cover whole line
+        from.X = 0
+        to.X = string.len(pane.Buf:Line(to.Y))
+
+        from, to = buffer.Loc(from.X, from.Y), buffer.Loc(to.X, to.Y)
+    else
+        -- No selection, use all text
+        local lastLine = pane.Buf:LinesNum() - 1
+        local lastLineLen = string.len(pane.Buf:Line(lastLine))
+        from, to = buffer.Loc(0, 0), buffer.Loc(lastLineLen, lastLine)
+    end
+
+    micro.Log("[sortlines] Normalized: " ..
+        tostring(from.Y) .. ":" .. tostring(from.X) .. " - " .. tostring(to.Y) .. ":" .. tostring(to.X))
+
+    if from.Y == to.Y then
+        return micro.InfoBar():Message("You have to select lines of text first.")
+    end
 
     -- Copy the lines from the buffer into a table for sorting
 
-    local lines = {}
-    for lineNo = firstLine, lastLine do
-        table.insert(lines, buf:Line(lineNo))
-    end
+    local oldLines = GetLines(from, to)
 
     -- Do the actual sort
 
-    local sorted = SortLines(lines, descending, caseInsensitive, unique)
+    local sortedText = SortLines(oldLines, opts)
 
     -- Replace the selected lines with the sorted lines
 
-    for i, lineNo in ipairs(sorted) do
-        micro.Log(string.format("[sortlines] Replacing line %d with: %s", firstLine + i - 1, lineNo))
-        buf:Replace(micro_buffer.Loc(0, firstLine + i - 1), micro_buffer.Loc(0, firstLine + i), lineNo .. "\n")
-    end
-
-    cursor:Relocate()
-    cursor:StoreVisualX()
-    bufPane:Relocate()
+    pane.Buf:Replace(from, to, table.concat(sortedText, "\n"))
 end
