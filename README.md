@@ -22,16 +22,38 @@ Press `Ctrl-E`, type `sortlines` (or other function, see below), and press Enter
 See the [help file](help/sort-lines.md) or run `help sort-lines` in Micro
 for selection details and a key binding example.
 
-### Functions
+### Commands
 
-- sortNormal - Sort lines (ascending, case sensitive)
-- sortUnique - Sort lines (unique ascending, case sensitive)
-- sortCaseInsensitive - Sort lines (ascending, case insensitive)
-- sortCaseInsensitiveUnique - Sort lines (unique ascending, case insensitive)
-- sortReverse - Sort lines (descending, case sensitive)
-- sortReverseUnique - Sort lines (unique descending, case sensitive)
-- sortReverseCaseInsensitive - Sort lines (descending, case insensitive)
-- sortReverseCaseInsensitiveUnique - Sort lines (unique descending, case insensitive)
+All commands take no arguments and use the same selection and newline handling.
+
+| Command | Order | Case-insensitive | Remove duplicates |
+| --- | --- | --- | --- |
+| `sortlines` | Ascending | Yes | Yes |
+| `sortnormal` | Ascending | No | No |
+| `sortunique` | Ascending | No | Yes |
+| `sortcaseinsensitive` | Ascending | Yes | No |
+| `sortcaseinsensitiveunique` | Ascending | Yes | Yes |
+| `sortreverse` | Descending | No | No |
+| `sortreverseunique` | Descending | No | Yes |
+| `sortreversecaseinsensitive` | Descending | Yes | No |
+| `sortreversecaseinsensitiveunique` | Descending | Yes | Yes |
+
+Case-insensitive commands use Unicode lowercase keys, not locale-specific
+collation or full Unicode case folding. Equal keys retain their original order.
+Unique commands retain the first occurrence, using the command's case setting.
+Already-sorted text without removable duplicates is left untouched.
+
+## Tests
+
+From the plugin directory, run with Lua 5.3 or newer:
+
+```shell
+lua tests/sortlines_test.lua
+```
+
+The tests mock Micro's APIs and cover command modes, selection boundaries,
+newline preservation, Unicode coordinates, and unchanged/read-only buffers.
+Interactive selection and undo behavior should also be checked in Micro.
 
 ## Future
 

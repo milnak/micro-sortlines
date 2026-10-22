@@ -19,6 +19,23 @@ selections remain selected over the resulting complete lines. Already-sorted,
 unique text is left untouched. Read-only buffers are not modified.
 Use Micro's normal Undo action (`Ctrl-Z`) to undo a sort.
 
+## Other commands
+
+All commands take no arguments and sort the same complete-line range:
+
+- `sortnormal`: ascending, case-sensitive, keeps duplicates.
+- `sortunique`: ascending, case-sensitive, removes duplicates.
+- `sortcaseinsensitive`: ascending, ignores case, keeps duplicates.
+- `sortcaseinsensitiveunique`: same as `sortlines`.
+- `sortreverse`: descending, case-sensitive, keeps duplicates.
+- `sortreverseunique`: descending, case-sensitive, removes duplicates.
+- `sortreversecaseinsensitive`: descending, ignores case, keeps duplicates.
+- `sortreversecaseinsensitiveunique`: descending, ignores case, removes duplicates.
+
+Equal sort keys retain their original order. Unique commands retain the first
+occurrence according to their case setting. Unicode lowercase keys do not
+provide full Unicode case folding or normalization.
+
 ## Key binding
 
 For example, run this command from Micro's command bar:
