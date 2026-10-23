@@ -1,11 +1,28 @@
 # Line sorting plugin for Micro Editor
 
-## Installation
+### Installation
 
-```shell
-cd ~/.config/micro/plug
-git clone https://github.com/milnak/micro-sortlines.git sortlines
+Settings:
+
+Add this repo as a pluginrepos option in the `~/.config/micro/settings.json` file (it is necessary to restart the micro after this change):
+
+```json
+{
+  "pluginrepos": [
+      "https://raw.githubusercontent.com/milnak/micro-sortlines/main/repo.json"
+  ]
+}
 ```
+
+Installation:
+
+In your micro editor press `Ctrl-e` and run command:
+
+`> plugin install sortlines`
+
+or run in your shell:
+
+`micro -plugin install sortlines`
 
 Then restart micro.
 
