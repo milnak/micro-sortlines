@@ -11,7 +11,7 @@
         "Versions": [
             {
                 "Version": "1.0.0",
-                "Url": "https://github.com/milnak/micro-sortlines/archive/v1.0.0.zip",
+                "Url": "https://raw.githubusercontent.com/milnak/micro-sortlines/refs/heads/main/archive/v1.0.0.zip",
                 "Require": {
                     "micro": ">=2.0.0"
                 }
