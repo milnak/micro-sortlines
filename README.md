@@ -94,3 +94,9 @@ All contributions are welcome by pull request or issue.
 ## License
 
 See [LICENSE](./LICENSE) for full text.
+
+## Updating archive
+
+When a new version is created, a new archive release can be created using:
+
+`zip -r -9 .\archive\v1.0.0 * -x 'archive/*' -x 'tests/*' -x '.gitignore'`
