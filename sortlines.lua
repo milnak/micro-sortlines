@@ -2,7 +2,6 @@
 -- Copyright 2026 Jeff Miller
 -- https://github.com/milnak/micro-sortlines
 -- MIT license
-VERSION = "1.0.0"
 
 local micro = import("micro")
 local config = import("micro/config")
@@ -160,7 +159,7 @@ function SortCommand(pane, args, opts)
         end
         cursor:SetSelectionStart(anchor)
         cursor:SetSelectionEnd(head)
-        cursor.OrigSelection = cursor.CurSelection
+        -- cursor.OrigSelection = cursor.CurSelection
         cursor:GotoLoc(head)
     else
         cursor:Relocate()
