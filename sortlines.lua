@@ -3,6 +3,9 @@
 -- https://github.com/milnak/micro-sortlines
 -- MIT license
 
+-- GetInstalledPluginVersion returns the string of the exported VERSION variable of a loaded plugin
+VERSION = "1.0.2"
+
 local micro = import("micro")
 local config = import("micro/config")
 local strings = import("strings")
